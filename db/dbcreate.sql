@@ -56,19 +56,12 @@ CREATE TABLE IF NOT EXISTS `posts` (
 
 --To insert Links
 delimiter //
-create function InsertLink(url text, title text, description text, post_id varchar(100)) returns int 
-begin 
-	insert into links(url, title, post_id, description) values (url, title, post_id, description); return 0; 
+create function InsertLink(url varchar(255), title text, description text, post_id varchar(255)) returns int begin insert ignore into links(url, title, post_id, description) values (url, title, post_id, description);  update posts set links_count=links_count+1 where id = post_id; return 0;
 end//
 delimiter ;
 
 --To insert posts
 delimiter //
-CREATE FUNCTION InsertPost(author_name VARCHAR(100), author_id TEXT, message TEXT, likes_count INT(11), comments_count INT(11), id VARCHAR(100)) RETURNS INT 
-BEGIN 
-	DECLARE affected_rows INT; 
-	INSERT INTO posts (author_name, author_id, message, likes_count, comments_count, id) VALUES (author_name, author_id, message, likes_count, comments_count, id) ON DUPLICATE KEY UPDATE likes_count = likes_count, comments_count = comments_count; 
-	SELECT ROW_COUNT() INTO affected_rows; 
-	RETURN affected_rows; 
+CREATE FUNCTION InsertPost(author_name VARCHAR(100), author_id TEXT, message TEXT, likes_count INT, comments_count INT, created_time TIMESTAMP, updated_time TIMESTAMP, id VARCHAR(255)) RETURNS INT BEGIN DECLARE affected_rows INT; INSERT INTO posts (author_name, author_id, message, likes_count, comments_count, created_time, updated_time, id) VALUES (author_name, author_id, message, likes_count, comments_count, created_time, updated_time, id) ON DUPLICATE KEY UPDATE likes_count = likes_count, comments_count = comments_count, updated_time = updated_time; SELECT ROW_COUNT() INTO affected_rows; RETURN affected_rows;
 END//
 delimiter ;
